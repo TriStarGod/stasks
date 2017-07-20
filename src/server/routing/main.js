@@ -1,0 +1,61 @@
+// @flow
+
+import {
+  homePage,
+  helloPage,
+  helloAsyncPage,
+  helloEndpoint,
+} from '../controller';
+
+import {
+  HOME,
+  HELLO,
+  HELLO_ASYNC,
+  helloEndpointRoute,
+} from '../../client/route';
+
+import renderApp from '../render-app';
+
+export default (app) => {
+  app.get(HOME, (req, res) => {
+    res.send(renderApp(req.url, homePage()));
+  });
+
+  app.get(HELLO, (req, res) => {
+    helloPage()
+      .then(
+        plainPartialState => res.send(renderApp(req.url, plainPartialState)),
+        // eslint-disable-next-line no-console
+        err => console.error(err),
+      );
+  });
+
+  app.get(HELLO_ASYNC, (req, res) => {
+    res.send(renderApp(req.url, helloAsyncPage()));
+  });
+
+  app.get(helloEndpointRoute(), (req, res) => {
+    res.json(helloEndpoint(req.params.num));
+  });
+  // const testJSON = [
+  //   { name: 'J S', username: 'Joho' },
+  //   { name: 'J D', username: 'JCakes' }
+  // ];
+  // app.get('/sendjson', (req, res) => {
+  //   res.json(testJSON);
+  // });
+  app.get('/500', () => {
+    throw Error('Fake Internal Server Error');
+  });
+
+  app.get('*', (req, res) => {
+    res.status(404).send(renderApp(req.url));
+  });
+
+  // eslint-disable-next-line no-unused-vars
+  app.use((err, req, res, next) => {
+    // eslint-disable-next-line no-console
+    console.error(err.stack);
+    res.status(500).send('Something went wrong!');
+  });
+};

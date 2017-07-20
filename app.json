@@ -1,0 +1,13 @@
+{
+  "env": {
+    "NPM_CONFIG_PRODUCTION": { "required": true },
+    "MONGODB_URI": { "required": true }
+  },
+  "environments": {
+    "test": {
+      "scripts": {
+        "test-setup": "rm -rf lib"
+      }
+    }
+  }
+}
